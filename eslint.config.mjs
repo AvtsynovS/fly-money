@@ -6,8 +6,9 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import stylistic from '@stylistic/eslint-plugin';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import prettierConfig from 'eslint-config-prettier';
 
-/** Запрет глубоких приватных путей импорта в нашей DDD структуре */
+/** Для запрета приватных путей */
 const PROHIBITED_PATH_GROUPS = [
   // Запрет импорта глубоких приватных файлов папок доменов снаружи
   './domains/*/*/**',
@@ -44,7 +45,7 @@ const eslintConfig = defineConfig([
             ['@shared', './src/components/shared'],
             ['@lib', './src/lib'],
             ['@domains/auth', './src/domains/auth'],
-            ['@domains/user', './src/domains/user'],
+            ['@domains/profile', './src/domains/profile'],
             ['@domains/transfer', './src/domains/transfer'],
             ['@domains/marketing', './src/domains/marketing'],
           ],
@@ -59,55 +60,48 @@ const eslintConfig = defineConfig([
         { allowConstantExport: true },
       ],
 
-      // 1. ПРАВИЛО ГРАНИЦ ДОМЕНОВ И СЛОЕВ (DDD Boundaries)
       'import-plugin/no-restricted-paths': [
         'error',
         {
           zones: [
             {
-              // Атомарный UI-Kit (shadcn) не должен знать о бизнес-логике
               target: ['./src/components/ui'],
               from: ['./src/domains/**'],
               message:
                 'Компоненты shadcn/ui (@ui) должны быть чистыми и независимыми от бизнес-доменов.',
             },
             {
-              // Защита общих компонентов от импорта страниц или доменов
               target: ['./src/components/shared', './src/lib/**'],
               from: ['./src/app/**', './src/domains/**'],
               message:
                 'Импорт из страниц (app) и бизнес-модулей (domains) в shared/lib слои запрещен.',
             },
             {
-              // Изоляция домена AUTH
               target: ['./src/domains/auth'],
               from: [
                 './src/domains/transfer',
-                './src/domains/user',
+                './src/domains/profile',
                 './src/domains/marketing',
               ],
               message:
-                'Домен Auth изолирован. Импорты из transfer, user или marketing запрещены.',
+                'Домен Auth изолирован. Импорты из transfer, profile или marketing запрещены.',
             },
             {
-              // Изоляция домена TRANSFER (Переводы денег)
               target: ['./src/domains/transfer'],
               from: ['./src/domains/auth', './src/domains/marketing'],
               message:
                 'Домен Transfer не может напрямую импортировать внутренности Auth или Marketing. Используйте @shared или @lib.',
             },
             {
-              // Изоляция домена USER (Профиль)
-              target: ['./src/domains/user'],
+              target: ['./src/domains/profile'],
               from: ['./src/domains/transfer', './src/domains/marketing'],
               message:
-                'Домен User не должен импортировать логику переводов (transfer) или лендинга.',
+                'Домен Profile не должен импортировать логику переводов (transfer) или лендинга.',
             },
           ],
         },
       ],
 
-      // 2. ЗАПРЕТ ПРИВАТНЫХ ПУТЕЙ (перенесено из старого проекта)
       'no-restricted-imports': [
         'error',
         {
@@ -121,31 +115,24 @@ const eslintConfig = defineConfig([
         },
       ],
 
-      // 3. АВТО-СОРТИРОВКА ИМПОРТОВ (перенесено из старого проекта и адаптировано под Next.js 16)
       'simple-import-sort/imports': [
         'error',
         {
           groups: [
-            // Пакеты: react, next, внешние библиотеки
+            // external libs
             ['^react', '^next', '^@tanstack', '^[a-z]'],
-            // Абсолютные алиасы проекта
+            // aliases
             ['^@'],
-            // Относительные импорты
-            [
-              '^\\.\\.(?!/?\()',
-              '^\\./(?=.*/)(?!/?\))',
-              '^\\.(?!/?\()',
-              '^\\./?\)',
-            ],
-            // Стили
-            ['^styled-components\(', '^.*\\.css\)'],
-            // Логические типы
-            ['.*\\u0000\$'],
+            // relative imports
+            ['^\\.\\.(?!/?$)', '^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+            // css
+            ['^.*\\.css$'],
+            // types
+            ['.*\\u0000$'],
           ],
         },
       ],
 
-      // 4. СТИЛИСТИЧЕСКИЕ ОТСТУПЫ (перенесено из старого проекта)
       '@stylistic/padding-line-between-statements': [
         'error',
         { blankLine: 'always', prev: ['const', 'let'], next: 'expression' },
@@ -156,8 +143,7 @@ const eslintConfig = defineConfig([
       ],
     },
   },
-
-  // Игнорируемые пути билда Next.js
+  prettierConfig,
   globalIgnores([
     '.next/**',
     'out/**',
