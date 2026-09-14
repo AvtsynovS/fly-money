@@ -25,7 +25,7 @@
       "@lib/*": ["./src/lib/*"],
       "@domains/auth/*": ["./src/domains/auth/*"],
       "@domains/user/*": ["./src/domains/user/*"],
-      "@domains/transfer/*": ["./src/domains/transfer/*"],
+      "@domains/transfers/*": ["./src/domains/transfer/*"],
       "@domains/marketing/*": ["./src/domains/marketing/*"]
     }
   },

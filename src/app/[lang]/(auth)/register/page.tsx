@@ -1,4 +1,4 @@
-import { RegisterStepper } from '@/domains/auth/components/RegisterStepper';
+import { RegisterStepper } from '@/domains/auth';
 
 export default function RegisterPage() {
   return (

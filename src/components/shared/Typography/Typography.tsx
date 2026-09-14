@@ -9,7 +9,7 @@ const typographyVariants = cva(
     variants: {
       variant: {
         h1: 'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl',
-        h2: 'scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0',
+        h2: 'scroll-m-20 text-3xl font-bold tracking-tight first:mt-0',
         h3: 'scroll-m-20 text-2xl font-semibold tracking-tight',
         h4: 'scroll-m-20 text-xl font-bold tracking-tight text-foreground',
         h5: 'scroll-m-20 text-lg font-semibold',
@@ -17,7 +17,7 @@ const typographyVariants = cva(
         description:
           'text-sm leading-relaxed font-normal text-muted-foreground',
         hint: 'block text-xs font-normal tracking-wide text-muted-foreground/80',
-        body: 'leading-7 [&:not(:first-child)]:mt-6',
+        body: 'leading-7',
       },
     },
     defaultVariants: {
